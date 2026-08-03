@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Echo — Профиль</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="profile-container">
+        <h1>👤 Мой профиль</h1>
+        <div class="profile-card">
+            <p><strong>Имя пользователя:</strong> <span id="profile-username"></span></p>
+            <p><strong>Отображаемое имя:</strong> <span id="profile-displayname"></span></p>
+        </div>
+        <h2>⚙️ Настройки</h2>
+        <div class="settings">
+            <label>Тема:
+                <select id="theme-select">
+                    <option value="light">Светлая</option>
+                    <option value="dark">Тёмная</option>
+                </select>
+            </label>
+            <label>Язык:
+                <select id="lang-select">
+                    <option value="ru">Русский</option>
+                    <option value="en">English</option>
+                </select>
+            </label>
+            <button id="save-settings">💾 Сохранить настройки</button>
+            <p id="settings-status" class="success"></p>
+        </div>
+        <button id="back-to-messenger" class="secondary">← Назад в чат</button>
+    </div>
+    <script src="profile.js"></script>
+</body>
+</html>
