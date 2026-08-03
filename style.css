@@ -1,4 +1,3 @@
-/* style.css — Echo Messenger (обновлённый) */
 * {
     margin: 0;
     padding: 0;
@@ -90,16 +89,13 @@ body {
     font-size: 0.9rem;
     margin-top: 0.3rem;
 }
-.success {
-    color: #28a745;
-}
 
 /* ===== MESSENGER ===== */
 .messenger-container {
     display: flex;
-    width: 90vw;
-    max-width: 1100px;
-    height: 85vh;
+    width: 95vw;
+    max-width: 1200px;
+    height: 90vh;
     background: #fff;
     border-radius: 24px;
     overflow: hidden;
@@ -107,11 +103,12 @@ body {
 }
 
 .sidebar {
-    width: 300px;
+    width: 320px;
     background: #f8faff;
     border-right: 1px solid #e8ecf3;
     display: flex;
     flex-direction: column;
+    min-width: 250px;
 }
 
 .sidebar-header {
@@ -124,6 +121,7 @@ body {
 
 .sidebar-header h2 {
     color: #2d3e50;
+    font-size: 1.3rem;
 }
 
 #logout-btn {
@@ -138,7 +136,6 @@ body {
     color: #d9534f;
 }
 
-/* 🔍 ПОИСК */
 .search-box {
     padding: 0.8rem 1rem;
     border-bottom: 1px solid #e8ecf3;
@@ -178,20 +175,30 @@ body {
 .user-item:hover {
     background: #edf2fa;
 }
+
 .user-item.active {
     background: #e3eaf3;
     border-left-color: #2d3e50;
 }
 
+.user-item .user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-item .display-name {
+    font-weight: 600;
+    color: #2d3e50;
+}
+
 .user-item .username {
     font-size: 0.75rem;
     color: #8896a8;
-    margin-left: 0.5rem;
 }
 
 .user-item .status {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background: #4caf50;
     display: inline-block;
@@ -201,6 +208,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .chat-header {
@@ -208,6 +216,7 @@ body {
     border-bottom: 1px solid #e8ecf3;
     font-weight: 600;
     color: #2d3e50;
+    background: #fafcff;
 }
 
 .messages {
@@ -217,25 +226,34 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    background: #fafcff;
 }
 
 .message {
-    max-width: 65%;
+    max-width: 70%;
     padding: 0.7rem 1rem;
     border-radius: 18px;
     background: #edf2fa;
     word-break: break-word;
 }
+
 .message.self {
     align-self: flex-end;
     background: #2d3e50;
     color: #fff;
 }
+
 .message .sender {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     opacity: 0.6;
     margin-right: 0.5rem;
+}
+
+.message .time {
+    font-size: 0.6rem;
+    opacity: 0.4;
+    margin-left: 0.5rem;
 }
 
 .message-input {
@@ -243,6 +261,7 @@ body {
     padding: 0.8rem 1.2rem;
     border-top: 1px solid #e8ecf3;
     gap: 0.6rem;
+    background: #fff;
 }
 
 .message-input input {
@@ -252,6 +271,7 @@ body {
     border-radius: 30px;
     outline: none;
 }
+
 .message-input button {
     padding: 0.6rem 1.4rem;
     background: #2d3e50;
@@ -259,6 +279,7 @@ body {
     border: none;
     border-radius: 30px;
     cursor: pointer;
+    font-size: 1.2rem;
 }
 
 /* ===== PROFILE ===== */
@@ -268,6 +289,7 @@ body {
     border-radius: 24px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
     width: 420px;
+    max-width: 90vw;
 }
 
 .profile-card {
@@ -304,59 +326,79 @@ body {
 body.dark {
     background: #1a1f2b;
 }
+
 body.dark .auth-container,
 body.dark .profile-container,
 body.dark .messenger-container {
     background: #252b3a;
     color: #eef2f7;
 }
+
 body.dark .sidebar {
     background: #1f2533;
     border-color: #2f3649;
 }
+
 body.dark .user-item:hover {
     background: #2f3649;
 }
+
 body.dark .user-item.active {
     background: #3a4258;
 }
+
+body.dark .display-name {
+    color: #eef2f7 !important;
+}
+
 body.dark .message {
     background: #2f3649;
     color: #eef2f7;
 }
+
 body.dark .message.self {
     background: #4a5a7a;
 }
+
 body.dark input,
 body.dark select {
     background: #1f2533;
     color: #eef2f7;
     border-color: #3a4258;
 }
+
 body.dark .chat-header,
 body.dark .message-input,
 body.dark .search-box {
     border-color: #2f3649;
+    background: #1f2533;
 }
-body.dark .user-item .username {
-    color: #8896a8;
+
+body.dark .messages {
+    background: #1f2533;
+}
+
+body.dark .sidebar-header {
+    border-color: #2f3649;
 }
 
 /* ===== АДАПТИВНОСТЬ ===== */
 @media (max-width: 768px) {
     .messenger-container {
         flex-direction: column;
-        height: 95vh;
+        height: 100vh;
         width: 100vw;
         border-radius: 0;
     }
+    
     .sidebar {
         width: 100%;
-        height: 40%;
+        height: 45%;
         border-right: none;
         border-bottom: 1px solid #e8ecf3;
     }
+    
     .chat-area {
-        height: 60%;
+        height: 55%;
     }
 }
