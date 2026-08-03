@@ -46,27 +46,40 @@ function checkAuth() {
 // ============================================
 if (window.location.pathname.endsWith('index.html') || 
     window.location.pathname === '/' || 
-    window.location.pathname === '') {
+    window.location.pathname === '' ||
+    window.location.pathname.includes('index')) {
     
     // Если уже есть сессия - перенаправляем
     if (getSession()) {
         window.location.href = 'messenger.html';
     }
 
-    // Переключение табов
+    // Переключение табов - поддерживаем и click, и touch
     document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
+        const switchTab = function(e) {
+            e.preventDefault();
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
             const formId = tab.dataset.tab === 'login' ? 'login-form' : 'register-form';
             document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-            document.getElementById(formId).classList.add('active');
-        });
+            const form = document.getElementById(formId);
+            if (form) form.classList.add('active');
+            // Очищаем ошибки при переключении
+            document.getElementById('login-error').textContent = '';
+            document.getElementById('reg-error').textContent = '';
+        };
+        
+        tab.addEventListener('click', switchTab);
+        tab.addEventListener('touchstart', switchTab, { passive: true });
     });
 
     // Регистрация
-    document.getElementById('register-form').addEventListener('submit', (e) => {
-        e.preventDefault();
+    const registerForm = document.getElementById('register-form');
+    const registerBtn = document.getElementById('register-btn');
+    
+    function handleRegister(e) {
+        if (e) e.preventDefault();
+        
         const username = document.getElementById('reg-username').value.trim();
         const password = document.getElementById('reg-password').value.trim();
         const displayname = document.getElementById('reg-displayname').value.trim() || username;
@@ -93,16 +106,46 @@ if (window.location.pathname.endsWith('index.html') ||
         });
         setUsers(users);
         errorEl.textContent = '';
+        
+        // Показываем сообщение об успехе
         alert('✅ Регистрация успешна! Теперь войдите.');
-        document.querySelector('[data-tab="login"]').click();
-    });
+        
+        // Переключаем на вкладку входа
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelector('[data-tab="login"]').classList.add('active');
+        document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+        document.getElementById('login-form').classList.add('active');
+        
+        // Очищаем поля регистрации
+        document.getElementById('reg-username').value = '';
+        document.getElementById('reg-password').value = '';
+        document.getElementById('reg-displayname').value = '';
+    }
+    
+    registerForm.addEventListener('submit', handleRegister);
+    if (registerBtn) {
+        registerBtn.addEventListener('click', handleRegister);
+        registerBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            handleRegister(e);
+        }, { passive: false });
+    }
 
     // Вход
-    document.getElementById('login-form').addEventListener('submit', (e) => {
-        e.preventDefault();
+    const loginForm = document.getElementById('login-form');
+    const loginBtn = document.getElementById('login-btn');
+    
+    function handleLogin(e) {
+        if (e) e.preventDefault();
+        
         const username = document.getElementById('login-username').value.trim();
         const password = document.getElementById('login-password').value.trim();
         const errorEl = document.getElementById('login-error');
+
+        if (!username || !password) {
+            errorEl.textContent = 'Введите имя и пароль!';
+            return;
+        }
 
         const users = getUsers();
         const user = users.find(u => u.username === username && u.password === password);
@@ -115,40 +158,39 @@ if (window.location.pathname.endsWith('index.html') ||
         errorEl.textContent = '';
         setSession({ username: user.username, displayname: user.displayname });
         window.location.href = 'messenger.html';
-    });
+    }
+    
+    loginForm.addEventListener('submit', handleLogin);
+    if (loginBtn) {
+        loginBtn.addEventListener('click', handleLogin);
+        loginBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            handleLogin(e);
+        }, { passive: false });
+    }
 }
 
 // ============================================
 // ===== СТРАНИЦА МЕССЕНДЖЕРА =====
 // ============================================
 if (window.location.pathname.includes('messenger.html')) {
-    console.log('✅ Messenger страница загружена');
-    
     const session = checkAuth();
-    if (!session) {
-        console.log('❌ Нет сессии');
-        throw new Error('No session');
-    }
-    
-    console.log('👤 Текущий пользователь:', session.username);
+    if (!session) return;
     
     let currentChat = null;
     let allUsers = [];
     let filteredUsers = [];
 
-    // Загружаем пользователей
     function loadUsers() {
         allUsers = getUsers();
         filteredUsers = [...allUsers];
-        console.log('📋 Всего пользователей:', allUsers.length);
-        console.log('👥 Пользователи:', allUsers.map(u => u.username).join(', '));
         renderUserList();
     }
 
     // Поиск
     const searchInput = document.getElementById('search-users');
     if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
+        searchInput.addEventListener('input', function(e) {
             const query = e.target.value.toLowerCase().trim();
             if (query === '') {
                 filteredUsers = [...allUsers];
@@ -162,27 +204,19 @@ if (window.location.pathname.includes('messenger.html')) {
         });
     }
 
-    // Отрисовка списка пользователей
     function renderUserList() {
         const list = document.getElementById('user-list');
-        if (!list) {
-            console.error('❌ Элемент user-list не найден!');
-            return;
-        }
+        if (!list) return;
         
         list.innerHTML = '';
-        
-        // Исключаем текущего пользователя
         const availableUsers = filteredUsers.filter(u => u.username !== session.username);
-        
-        console.log('👥 Доступные пользователи:', availableUsers.length);
         
         if (availableUsers.length === 0) {
             const emptyMsg = document.createElement('div');
             emptyMsg.style.cssText = 'padding: 2rem 1.5rem; text-align: center; color: #8896a8;';
             emptyMsg.innerHTML = filteredUsers.length === 0 ? 
                 '🔍 Пользователь не найден' : 
-                '🤝 Пока нет других пользователей<br><span style="font-size:0.8rem;">Зарегистрируйте нового пользователя в другой вкладке</span>';
+                '🤝 Пока нет других пользователей';
             list.appendChild(emptyMsg);
             return;
         }
@@ -191,7 +225,6 @@ if (window.location.pathname.includes('messenger.html')) {
             const div = document.createElement('div');
             div.className = 'user-item' + (currentChat === u.username ? ' active' : '');
             
-            // Информация о пользователе
             const info = document.createElement('div');
             info.className = 'user-info';
             
@@ -213,7 +246,10 @@ if (window.location.pathname.includes('messenger.html')) {
             div.appendChild(status);
             
             div.dataset.username = u.username;
-            div.addEventListener('click', () => {
+            
+            // Поддерживаем и click, и touch
+            const selectUser = function(e) {
+                e.preventDefault();
                 currentChat = u.username;
                 renderUserList();
                 renderMessages();
@@ -221,13 +257,15 @@ if (window.location.pathname.includes('messenger.html')) {
                 if (header) {
                     header.innerHTML = `💬 ${u.displayname || u.username} <span style="font-weight:normal;font-size:0.8rem;color:#8896a8;">@${u.username}</span>`;
                 }
-            });
+            };
+            
+            div.addEventListener('click', selectUser);
+            div.addEventListener('touchstart', selectUser, { passive: false });
             
             list.appendChild(div);
         });
     }
 
-    // Отрисовка сообщений
     function renderMessages() {
         const container = document.getElementById('messages');
         if (!container) return;
@@ -267,14 +305,20 @@ if (window.location.pathname.includes('messenger.html')) {
         container.scrollTop = container.scrollHeight;
     }
 
-    // Отправка сообщения
     function sendMessage() {
         const input = document.getElementById('message-text');
         if (!input) return;
         
         const text = input.value.trim();
         if (!text || !currentChat) {
-            if (!currentChat) alert('Выберите собеседника!');
+            if (!currentChat) {
+                // Визуальное предупреждение на мобильных
+                const header = document.getElementById('chat-header');
+                if (header) {
+                    header.style.color = '#d9534f';
+                    setTimeout(() => header.style.color = '', 1000);
+                }
+            }
             return;
         }
         
@@ -291,17 +335,13 @@ if (window.location.pathname.includes('messenger.html')) {
         setMessages(all);
         input.value = '';
         renderMessages();
-        
-        // Имитация ответа
         simulateReply();
     }
 
-    // Имитация ответа
     function simulateReply() {
         const replies = ['Привет! 👋', 'Как дела?', 'Ок', '👍', 'Спасибо!', 'Да, конечно', 'Понял', 'Отлично! 😊'];
         setTimeout(() => {
             if (!currentChat) return;
-            
             const all = getMessages();
             const chatKey = [session.username, currentChat].sort().join('_');
             if (!all[chatKey]) all[chatKey] = [];
@@ -325,10 +365,14 @@ if (window.location.pathname.includes('messenger.html')) {
     
     if (sendBtn) {
         sendBtn.addEventListener('click', sendMessage);
+        sendBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            sendMessage();
+        }, { passive: false });
     }
     
     if (messageInput) {
-        messageInput.addEventListener('keydown', (e) => {
+        messageInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') sendMessage();
         });
     }
@@ -336,17 +380,19 @@ if (window.location.pathname.includes('messenger.html')) {
     // Выход
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+        logoutBtn.addEventListener('click', function() {
             clearSession();
             window.location.href = 'index.html';
         });
+        logoutBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            clearSession();
+            window.location.href = 'index.html';
+        }, { passive: false });
     }
 
-    // Загрузка данных
     loadUsers();
     renderMessages();
-    
-    console.log('✅ Messenger инициализирован');
 }
 
 // ============================================
@@ -360,34 +406,51 @@ if (window.location.pathname.includes('profile.html')) {
     const user = users.find(u => u.username === session.username);
 
     if (user) {
-        document.getElementById('profile-username').textContent = user.username;
-        document.getElementById('profile-displayname').textContent = user.displayname || user.username;
+        const usernameEl = document.getElementById('profile-username');
+        const displaynameEl = document.getElementById('profile-displayname');
+        if (usernameEl) usernameEl.textContent = user.username;
+        if (displaynameEl) displaynameEl.textContent = user.displayname || user.username;
         document.getElementById('theme-select').value = user.theme || 'light';
         document.getElementById('lang-select').value = user.lang || 'ru';
         applyTheme(user.theme || 'light');
     }
 
-    document.getElementById('save-settings').addEventListener('click', () => {
-        const theme = document.getElementById('theme-select').value;
-        const lang = document.getElementById('lang-select').value;
-        const users = getUsers();
-        const idx = users.findIndex(u => u.username === session.username);
+    const saveBtn = document.getElementById('save-settings');
+    if (saveBtn) {
+        const handleSave = function(e) {
+            if (e) e.preventDefault();
+            const theme = document.getElementById('theme-select').value;
+            const lang = document.getElementById('lang-select').value;
+            const users = getUsers();
+            const idx = users.findIndex(u => u.username === session.username);
+            
+            if (idx !== -1) {
+                users[idx].theme = theme;
+                users[idx].lang = lang;
+                setUsers(users);
+                applyTheme(theme);
+                const statusEl = document.getElementById('settings-status');
+                if (statusEl) {
+                    statusEl.textContent = '✅ Настройки сохранены!';
+                    setTimeout(() => statusEl.textContent = '', 3000);
+                }
+            }
+        };
         
-        if (idx !== -1) {
-            users[idx].theme = theme;
-            users[idx].lang = lang;
-            setUsers(users);
-            applyTheme(theme);
-            document.getElementById('settings-status').textContent = '✅ Настройки сохранены!';
-            setTimeout(() => {
-                document.getElementById('settings-status').textContent = '';
-            }, 3000);
-        }
-    });
+        saveBtn.addEventListener('click', handleSave);
+        saveBtn.addEventListener('touchstart', handleSave, { passive: false });
+    }
 
-    document.getElementById('back-to-messenger').addEventListener('click', () => {
-        window.location.href = 'messenger.html';
-    });
+    const backBtn = document.getElementById('back-to-messenger');
+    if (backBtn) {
+        backBtn.addEventListener('click', function() {
+            window.location.href = 'messenger.html';
+        });
+        backBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            window.location.href = 'messenger.html';
+        }, { passive: false });
+    }
 }
 
 function applyTheme(theme) {
