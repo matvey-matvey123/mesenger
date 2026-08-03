@@ -3,32 +3,1211 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Echo — Вход</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>Echo — Мессенджер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: #f0f2f5;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+        
+        /* ===== АВТОРИЗАЦИЯ ===== */
+        #auth-page {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 380px;
+            display: block;
+        }
+        
+        #auth-page h1 {
+            text-align: center;
+            font-size: 2rem;
+            color: #1a2332;
+            margin-bottom: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: #e8ecf1;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            touch-action: manipulation;
+        }
+        
+        .tab-btn.active {
+            background: #1a2332;
+            color: white;
+        }
+        
+        .tab-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .form {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .form.active {
+            display: flex;
+        }
+        
+        .form input {
+            padding: 14px 16px;
+            border: 2px solid #dce1e8;
+            border-radius: 30px;
+            font-size: 16px;
+            outline: none;
+            width: 100%;
+            -webkit-appearance: none;
+        }
+        
+        .form input:focus {
+            border-color: #1a2332;
+        }
+        
+        .form button {
+            padding: 14px;
+            background: #1a2332;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: 0.2s;
+        }
+        
+        .form button:active {
+            transform: scale(0.95);
+            background: #0d1420;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            text-align: center;
+            min-height: 20px;
+        }
+        
+        .success-msg {
+            color: #27ae60;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        /* ===== МЕССЕНДЖЕР ===== */
+        #messenger-page {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+            height: 92vh;
+            height: 92dvh;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        
+        .messenger-layout {
+            display: flex;
+            height: 100%;
+            flex-direction: row;
+        }
+        
+        .sidebar {
+            width: 300px;
+            min-width: 200px;
+            background: #f8faff;
+            border-right: 1px solid #e8ecf3;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 16px;
+            border-bottom: 1px solid #e8ecf3;
+        }
+        
+        .sidebar-header h2 {
+            color: #1a2332;
+            font-size: 1.2rem;
+        }
+        
+        .sidebar-header .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .sidebar-header .actions a {
+            text-decoration: none;
+            font-size: 1.3rem;
+            color: #1a2332;
+            padding: 5px 8px;
+        }
+        
+        .sidebar-header .actions button {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 5px 8px;
+            touch-action: manipulation;
+        }
+        
+        .search-box {
+            padding: 10px 16px;
+            border-bottom: 1px solid #e8ecf3;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #dce1e8;
+            border-radius: 30px;
+            font-size: 15px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .search-box input:focus {
+            border-color: #1a2332;
+        }
+        
+        .user-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 5px 0;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .user-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            touch-action: manipulation;
+            transition: 0.1s;
+        }
+        
+        .user-item:active {
+            background: #e3eaf3;
+        }
+        
+        .user-item.active {
+            background: #e3eaf3;
+            border-left-color: #1a2332;
+        }
+        
+        .user-item .name {
+            font-weight: 600;
+            color: #1a2332;
+        }
+        
+        .user-item .username {
+            font-size: 12px;
+            color: #8896a8;
+        }
+        
+        .user-item .online {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #2ecc71;
+            flex-shrink: 0;
+        }
+        
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        
+        .chat-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e8ecf3;
+            font-weight: 600;
+            color: #1a2332;
+            background: #fafcff;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: #fafcff;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .msg {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            background: #e8ecf1;
+            word-break: break-word;
+        }
+        
+        .msg.self {
+            align-self: flex-end;
+            background: #1a2332;
+            color: white;
+        }
+        
+        .msg .sender {
+            font-size: 11px;
+            font-weight: 600;
+            opacity: 0.6;
+            margin-right: 6px;
+        }
+        
+        .msg .time {
+            font-size: 10px;
+            opacity: 0.4;
+            margin-left: 6px;
+        }
+        
+        .msg-input {
+            display: flex;
+            padding: 10px 16px;
+            border-top: 1px solid #e8ecf3;
+            gap: 8px;
+            background: white;
+        }
+        
+        .msg-input input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid #dce1e8;
+            border-radius: 30px;
+            font-size: 16px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .msg-input input:focus {
+            border-color: #1a2332;
+        }
+        
+        .msg-input button {
+            padding: 10px 18px;
+            background: #1a2332;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            touch-action: manipulation;
+            min-width: 50px;
+        }
+        
+        .msg-input button:active {
+            transform: scale(0.9);
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: #8896a8;
+            margin-top: 30px;
+            font-size: 15px;
+        }
+        
+        /* ===== ПРОФИЛЬ ===== */
+        #profile-page {
+            display: none;
+            background: white;
+            padding: 30px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        #profile-page h1 {
+            margin-bottom: 20px;
+            color: #1a2332;
+        }
+        
+        .profile-card {
+            background: #f8faff;
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-card p {
+            margin: 8px 0;
+        }
+        
+        .settings-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        
+        .settings-group select {
+            padding: 12px;
+            border-radius: 30px;
+            border: 2px solid #dce1e8;
+            font-size: 16px;
+            width: 100%;
+            -webkit-appearance: none;
+        }
+        
+        .settings-group button {
+            padding: 14px;
+            background: #1a2332;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        
+        .settings-group button:active {
+            transform: scale(0.95);
+        }
+        
+        .back-btn {
+            padding: 12px;
+            background: #e8ecf1;
+            color: #1a2332;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            touch-action: manipulation;
+        }
+        
+        .back-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* ===== ТЁМНАЯ ТЕМА ===== */
+        body.dark #auth-page,
+        body.dark #profile-page,
+        body.dark #messenger-page {
+            background: #1e2633;
+            color: #eef2f7;
+        }
+        
+        body.dark .sidebar {
+            background: #181f2b;
+            border-color: #2a3342;
+        }
+        
+        body.dark .sidebar-header,
+        body.dark .search-box {
+            border-color: #2a3342;
+        }
+        
+        body.dark .sidebar-header h2 {
+            color: #eef2f7;
+        }
+        
+        body.dark .user-item:active {
+            background: #2a3342;
+        }
+        
+        body.dark .user-item.active {
+            background: #2a3342;
+        }
+        
+        body.dark .user-item .name {
+            color: #eef2f7;
+        }
+        
+        body.dark .chat-header,
+        body.dark .chat-messages {
+            background: #181f2b;
+            border-color: #2a3342;
+        }
+        
+        body.dark .msg {
+            background: #2a3342;
+            color: #eef2f7;
+        }
+        
+        body.dark .msg.self {
+            background: #3d4a62;
+        }
+        
+        body.dark .msg-input {
+            background: #181f2b;
+            border-color: #2a3342;
+        }
+        
+        body.dark .msg-input input {
+            background: #1e2633;
+            color: #eef2f7;
+            border-color: #3a4558;
+        }
+        
+        body.dark .profile-card {
+            background: #181f2b;
+        }
+        
+        body.dark .settings-group select {
+            background: #1e2633;
+            color: #eef2f7;
+            border-color: #3a4558;
+        }
+        
+        body.dark .back-btn {
+            background: #2a3342;
+            color: #eef2f7;
+        }
+        
+        body.dark .tab-btn {
+            background: #2a3342;
+            color: #eef2f7;
+        }
+        
+        body.dark .tab-btn.active {
+            background: #3d4a62;
+        }
+        
+        body.dark .form input {
+            background: #1e2633;
+            color: #eef2f7;
+            border-color: #3a4558;
+        }
+        
+        body.dark .form input:focus {
+            border-color: #5a6a82;
+        }
+        
+        /* ===== АДАПТИВНОСТЬ ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+            
+            #auth-page {
+                border-radius: 0;
+                height: 100vh;
+                height: 100dvh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                max-width: 100%;
+                padding: 30px 20px;
+            }
+            
+            #messenger-page {
+                border-radius: 0;
+                height: 100vh;
+                height: 100dvh;
+                max-width: 100%;
+            }
+            
+            .messenger-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 40%;
+                border-right: none;
+                border-bottom: 1px solid #e8ecf3;
+                min-width: unset;
+            }
+            
+            .chat-area {
+                height: 60%;
+            }
+            
+            #profile-page {
+                border-radius: 0;
+                height: 100vh;
+                height: 100dvh;
+                max-width: 100%;
+                padding: 30px 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .sidebar-header h2 {
+                font-size: 1rem;
+            }
+            
+            .user-item {
+                padding: 10px 12px;
+            }
+            
+            .chat-header {
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+            
+            .chat-messages {
+                padding: 10px 14px;
+            }
+            
+            .msg-input {
+                padding: 8px 12px;
+            }
+            
+            .msg {
+                max-width: 85%;
+                padding: 8px 12px;
+                font-size: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="auth-container" id="app">
-        <h1>🔊 Echo</h1>
-        <div class="tabs">
-            <button class="tab active" data-tab="login" type="button">Вход</button>
-            <button class="tab" data-tab="register" type="button">Регистрация</button>
-        </div>
 
-        <form id="login-form" class="auth-form active" autocomplete="off">
-            <input type="text" id="login-username" placeholder="Имя пользователя" required />
-            <input type="password" id="login-password" placeholder="Пароль" required />
-            <button type="submit" id="login-btn">Войти</button>
-            <p id="login-error" class="error"></p>
-        </form>
-
-        <form id="register-form" class="auth-form" autocomplete="off">
-            <input type="text" id="reg-username" placeholder="Имя пользователя" required />
-            <input type="password" id="reg-password" placeholder="Пароль" required />
-            <input type="text" id="reg-displayname" placeholder="Отображаемое имя" required />
-            <button type="submit" id="register-btn">Зарегистрироваться</button>
-            <p id="reg-error" class="error"></p>
-        </form>
+<!-- ============================================================ -->
+<!-- СТРАНИЦА АВТОРИЗАЦИИ -->
+<!-- ============================================================ -->
+<div id="auth-page">
+    <h1>🔊 Echo</h1>
+    
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="login" id="tab-login">Вход</button>
+        <button class="tab-btn" data-tab="register" id="tab-register">Регистрация</button>
     </div>
-    <script src="script.js"></script>
+    
+    <!-- Вход -->
+    <form class="form active" id="login-form" autocomplete="off">
+        <input type="text" id="login-username" placeholder="Имя пользователя" />
+        <input type="password" id="login-password" placeholder="Пароль" />
+        <button type="button" id="login-btn">Войти</button>
+        <div class="error" id="login-error"></div>
+    </form>
+    
+    <!-- Регистрация -->
+    <form class="form" id="register-form" autocomplete="off">
+        <input type="text" id="reg-username" placeholder="Имя пользователя" />
+        <input type="password" id="reg-password" placeholder="Пароль" />
+        <input type="text" id="reg-displayname" placeholder="Отображаемое имя" />
+        <button type="button" id="register-btn">Зарегистрироваться</button>
+        <div class="error" id="reg-error"></div>
+    </form>
+</div>
+
+<!-- ============================================================ -->
+<!-- СТРАНИЦА МЕССЕНДЖЕРА -->
+<!-- ============================================================ -->
+<div id="messenger-page">
+    <div class="messenger-layout">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>🔊 Echo</h2>
+                <div class="actions">
+                    <a href="#" id="profile-link">⚙️</a>
+                    <button id="logout-btn">🚪</button>
+                </div>
+            </div>
+            <div class="search-box">
+                <input type="text" id="search-users" placeholder="🔍 Найти пользователя..." />
+            </div>
+            <div class="user-list" id="user-list">
+                <!-- Пользователи -->
+            </div>
+        </div>
+        <div class="chat-area">
+            <div class="chat-header" id="chat-header">👈 Выберите собеседника</div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="empty-state">Выберите пользователя для начала чата</div>
+            </div>
+            <div class="msg-input">
+                <input type="text" id="message-text" placeholder="Введите сообщение..." />
+                <button id="send-btn">📨</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- СТРАНИЦА ПРОФИЛЯ -->
+<!-- ============================================================ -->
+<div id="profile-page">
+    <h1>👤 Мой профиль</h1>
+    <div class="profile-card">
+        <p><strong>Имя пользователя:</strong> <span id="profile-username"></span></p>
+        <p><strong>Отображаемое имя:</strong> <span id="profile-displayname"></span></p>
+    </div>
+    <h2>⚙️ Настройки</h2>
+    <div class="settings-group">
+        <label>Тема:
+            <select id="theme-select">
+                <option value="light">Светлая</option>
+                <option value="dark">Тёмная</option>
+            </select>
+        </label>
+        <label>Язык:
+            <select id="lang-select">
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+            </select>
+        </label>
+        <button id="save-settings">💾 Сохранить настройки</button>
+        <div class="success-msg" id="settings-status"></div>
+    </div>
+    <button class="back-btn" id="back-btn">← Назад в чат</button>
+</div>
+
+<!-- ============================================================ -->
+<!-- СКРИПТ -->
+<!-- ============================================================ -->
+<script>
+    // ================================================================
+    // ХРАНИЛИЩЕ
+    // ================================================================
+    const DB_KEY = 'echo_users';
+    const SESSION_KEY = 'echo_session';
+    const MESSAGES_KEY = 'echo_messages';
+    
+    function getUsers() {
+        try {
+            return JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        } catch {
+            return [];
+        }
+    }
+    
+    function setUsers(users) {
+        localStorage.setItem(DB_KEY, JSON.stringify(users));
+    }
+    
+    function getSession() {
+        try {
+            return JSON.parse(localStorage.getItem(SESSION_KEY));
+        } catch {
+            return null;
+        }
+    }
+    
+    function setSession(user) {
+        localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+    }
+    
+    function clearSession() {
+        localStorage.removeItem(SESSION_KEY);
+    }
+    
+    function getMessages() {
+        try {
+            return JSON.parse(localStorage.getItem(MESSAGES_KEY)) || {};
+        } catch {
+            return {};
+        }
+    }
+    
+    function setMessages(messages) {
+        localStorage.setItem(MESSAGES_KEY, JSON.stringify(messages));
+    }
+    
+    // ================================================================
+    // ПОКАЗ СТРАНИЦ
+    // ================================================================
+    function showPage(page) {
+        document.getElementById('auth-page').style.display = 'none';
+        document.getElementById('messenger-page').style.display = 'none';
+        document.getElementById('profile-page').style.display = 'none';
+        
+        if (page === 'auth') {
+            document.getElementById('auth-page').style.display = 'block';
+        } else if (page === 'messenger') {
+            document.getElementById('messenger-page').style.display = 'block';
+        } else if (page === 'profile') {
+            document.getElementById('profile-page').style.display = 'block';
+        }
+    }
+    
+    // ================================================================
+    // ПРИМЕНЕНИЕ ТЕМЫ
+    // ================================================================
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
+    }
+    
+    // ================================================================
+    // ПРОВЕРКА СЕССИИ
+    // ================================================================
+    function checkSession() {
+        const session = getSession();
+        if (session) {
+            const users = getUsers();
+            const user = users.find(u => u.username === session.username);
+            if (user) {
+                applyTheme(user.theme || 'light');
+                showPage('messenger');
+                initMessenger();
+                return true;
+            } else {
+                clearSession();
+            }
+        }
+        showPage('auth');
+        return false;
+    }
+    
+    // ================================================================
+    // АВТОРИЗАЦИЯ
+    // ================================================================
+    function initAuth() {
+        // Переключение табов
+        const tabLogin = document.getElementById('tab-login');
+        const tabRegister = document.getElementById('tab-register');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        
+        function switchTab(tab) {
+            if (tab === 'login') {
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+                document.getElementById('login-error').textContent = '';
+                document.getElementById('reg-error').textContent = '';
+            } else {
+                tabRegister.classList.add('active');
+                tabLogin.classList.remove('active');
+                registerForm.classList.add('active');
+                loginForm.classList.remove('active');
+                document.getElementById('login-error').textContent = '';
+                document.getElementById('reg-error').textContent = '';
+            }
+        }
+        
+        tabLogin.onclick = function(e) {
+            e.preventDefault();
+            switchTab('login');
+        };
+        tabLogin.ontouchstart = function(e) {
+            e.preventDefault();
+            switchTab('login');
+        };
+        
+        tabRegister.onclick = function(e) {
+            e.preventDefault();
+            switchTab('register');
+        };
+        tabRegister.ontouchstart = function(e) {
+            e.preventDefault();
+            switchTab('register');
+        };
+        
+        // Регистрация
+        function handleRegister() {
+            const username = document.getElementById('reg-username').value.trim();
+            const password = document.getElementById('reg-password').value.trim();
+            const displayname = document.getElementById('reg-displayname').value.trim() || username;
+            const errorEl = document.getElementById('reg-error');
+            
+            if (!username || !password) {
+                errorEl.textContent = '❌ Заполните все поля!';
+                return;
+            }
+            
+            const users = getUsers();
+            if (users.find(u => u.username === username)) {
+                errorEl.textContent = '❌ Пользователь уже существует!';
+                return;
+            }
+            
+            users.push({ 
+                username, 
+                password, 
+                displayname, 
+                theme: 'light', 
+                lang: 'ru'
+            });
+            setUsers(users);
+            errorEl.textContent = '';
+            alert('✅ Регистрация успешна! Теперь войдите.');
+            
+            document.getElementById('reg-username').value = '';
+            document.getElementById('reg-password').value = '';
+            document.getElementById('reg-displayname').value = '';
+            switchTab('login');
+        }
+        
+        document.getElementById('register-btn').onclick = handleRegister;
+        document.getElementById('register-btn').ontouchstart = function(e) {
+            e.preventDefault();
+            handleRegister();
+        };
+        
+        // Вход
+        function handleLogin() {
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            const errorEl = document.getElementById('login-error');
+            
+            if (!username || !password) {
+                errorEl.textContent = '❌ Введите имя и пароль!';
+                return;
+            }
+            
+            const users = getUsers();
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (!user) {
+                errorEl.textContent = '❌ Неверное имя или пароль!';
+                return;
+            }
+            
+            errorEl.textContent = '';
+            setSession({ username: user.username, displayname: user.displayname });
+            applyTheme(user.theme || 'light');
+            showPage('messenger');
+            initMessenger();
+        }
+        
+        document.getElementById('login-btn').onclick = handleLogin;
+        document.getElementById('login-btn').ontouchstart = function(e) {
+            e.preventDefault();
+            handleLogin();
+        };
+        
+        // Enter на полях
+        document.getElementById('login-username').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') handleLogin();
+        });
+        document.getElementById('login-password').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') handleLogin();
+        });
+        document.getElementById('reg-username').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') handleRegister();
+        });
+        document.getElementById('reg-password').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') handleRegister();
+        });
+        document.getElementById('reg-displayname').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') handleRegister();
+        });
+    }
+    
+    // ================================================================
+    // МЕССЕНДЖЕР
+    // ================================================================
+    let messengerInitialized = false;
+    let currentChat = null;
+    let allUsers = [];
+    let filteredUsers = [];
+    let session = null;
+    let replyTimeout = null;
+    
+    function initMessenger() {
+        if (messengerInitialized) return;
+        messengerInitialized = true;
+        
+        session = getSession();
+        if (!session) return;
+        
+        loadUsers();
+        setupMessengerEvents();
+        renderMessages();
+    }
+    
+    function loadUsers() {
+        allUsers = getUsers();
+        filteredUsers = [...allUsers];
+        renderUserList();
+    }
+    
+    function renderUserList() {
+        const list = document.getElementById('user-list');
+        if (!list) return;
+        
+        list.innerHTML = '';
+        const available = filteredUsers.filter(u => u.username !== session.username);
+        
+        if (available.length === 0) {
+            list.innerHTML = `<div style="padding:30px 16px;text-align:center;color:#8896a8;">
+                ${filteredUsers.length === 0 ? '🔍 Пользователь не найден' : '🤝 Пока нет других пользователей'}
+            </div>`;
+            return;
+        }
+        
+        available.forEach(u => {
+            const div = document.createElement('div');
+            div.className = 'user-item' + (currentChat === u.username ? ' active' : '');
+            div.innerHTML = `
+                <div>
+                    <div class="name">${u.displayname || u.username}</div>
+                    <div class="username">@${u.username}</div>
+                </div>
+                <span class="online"></span>
+            `;
+            
+            const selectUser = function(e) {
+                e.preventDefault();
+                currentChat = u.username;
+                renderUserList();
+                renderMessages();
+                document.getElementById('chat-header').textContent = `💬 ${u.displayname || u.username} (@${u.username})`;
+            };
+            
+            div.onclick = selectUser;
+            div.ontouchstart = function(e) {
+                e.preventDefault();
+                selectUser(e);
+            };
+            
+            list.appendChild(div);
+        });
+    }
+    
+    function renderMessages() {
+        const container = document.getElementById('chat-messages');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        if (!currentChat) {
+            container.innerHTML = '<div class="empty-state">👈 Выберите собеседника</div>';
+            return;
+        }
+        
+        const all = getMessages();
+        const chatKey = [session.username, currentChat].sort().join('_');
+        const msgs = all[chatKey] || [];
+        
+        if (msgs.length === 0) {
+            container.innerHTML = '<div class="empty-state">💬 Напишите первое сообщение!</div>';
+            return;
+        }
+        
+        msgs.forEach(msg => {
+            const div = document.createElement('div');
+            div.className = 'msg' + (msg.from === session.username ? ' self' : '');
+            
+            const sender = msg.from === session.username ? 'Вы' : 
+                (allUsers.find(u => u.username === msg.from)?.displayname || msg.from);
+            
+            const time = new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            div.innerHTML = `<span class="sender">${sender}</span> ${msg.text} <span class="time">${time}</span>`;
+            container.appendChild(div);
+        });
+        
+        container.scrollTop = container.scrollHeight;
+    }
+    
+    function sendMessage() {
+        const input = document.getElementById('message-text');
+        if (!input) return;
+        
+        const text = input.value.trim();
+        if (!text) return;
+        
+        if (!currentChat) {
+            const header = document.getElementById('chat-header');
+            header.textContent = '⚠️ Выберите собеседника!';
+            header.style.color = '#e74c3c';
+            setTimeout(() => {
+                header.textContent = '👈 Выберите собеседника';
+                header.style.color = '';
+            }, 1500);
+            return;
+        }
+        
+        const all = getMessages();
+        const chatKey = [session.username, currentChat].sort().join('_');
+        if (!all[chatKey]) all[chatKey] = [];
+        
+        all[chatKey].push({
+            from: session.username,
+            text: text,
+            timestamp: Date.now()
+        });
+        
+        setMessages(all);
+        input.value = '';
+        renderMessages();
+        
+        // Ответ
+        if (replyTimeout) clearTimeout(replyTimeout);
+        replyTimeout = setTimeout(() => {
+            if (!currentChat) return;
+            const all2 = getMessages();
+            const key2 = [session.username, currentChat].sort().join('_');
+            if (!all2[key2]) all2[key2] = [];
+            
+            const last = all2[key2][all2[key2].length - 1];
+            if (last && last.from === session.username) {
+                const replies = ['Привет! 👋', 'Как дела?', 'Ок', '👍', 'Спасибо!', 'Да, конечно', 'Понял', 'Отлично! 😊'];
+                all2[key2].push({
+                    from: currentChat,
+                    text: replies[Math.floor(Math.random() * replies.length)],
+                    timestamp: Date.now()
+                });
+                setMessages(all2);
+                renderMessages();
+            }
+        }, 1200 + Math.random() * 1500);
+    }
+    
+    function setupMessengerEvents() {
+        // Поиск
+        document.getElementById('search-users').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            if (query === '') {
+                filteredUsers = [...allUsers];
+            } else {
+                filteredUsers = allUsers.filter(u =>
+                    u.username.toLowerCase().includes(query) ||
+                    (u.displayname && u.displayname.toLowerCase().includes(query))
+                );
+            }
+            renderUserList();
+        });
+        
+        // Отправка
+        const sendBtn = document.getElementById('send-btn');
+        const msgInput = document.getElementById('message-text');
+        
+        sendBtn.onclick = sendMessage;
+        sendBtn.ontouchstart = function(e) {
+            e.preventDefault();
+            sendMessage();
+        };
+        
+        msgInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+        
+        // Выход
+        document.getElementById('logout-btn').onclick = function() {
+            clearSession();
+            messengerInitialized = false;
+            showPage('auth');
+            initAuth();
+        };
+        document.getElementById('logout-btn').ontouchstart = function(e) {
+            e.preventDefault();
+            clearSession();
+            messengerInitialized = false;
+            showPage('auth');
+            initAuth();
+        };
+        
+        // Профиль
+        document.getElementById('profile-link').onclick = function(e) {
+            e.preventDefault();
+            showPage('profile');
+            loadProfile();
+        };
+        document.getElementById('profile-link').ontouchstart = function(e) {
+            e.preventDefault();
+            showPage('profile');
+            loadProfile();
+        };
+    }
+    
+    // ================================================================
+    // ПРОФИЛЬ
+    // ================================================================
+    function loadProfile() {
+        const session = getSession();
+        if (!session) return;
+        
+        const users = getUsers();
+        const user = users.find(u => u.username === session.username);
+        
+        if (user) {
+            document.getElementById('profile-username').textContent = user.username;
+            document.getElementById('profile-displayname').textContent = user.displayname || user.username;
+            document.getElementById('theme-select').value = user.theme || 'light';
+            document.getElementById('lang-select').value = user.lang || 'ru';
+        }
+        
+        // Сохранение
+        document.getElementById('save-settings').onclick = function() {
+            const theme = document.getElementById('theme-select').value;
+            const lang = document.getElementById('lang-select').value;
+            const users = getUsers();
+            const idx = users.findIndex(u => u.username === session.username);
+            
+            if (idx !== -1) {
+                users[idx].theme = theme;
+                users[idx].lang = lang;
+                setUsers(users);
+                applyTheme(theme);
+                document.getElementById('settings-status').textContent = '✅ Настройки сохранены!';
+                setTimeout(() => {
+                    document.getElementById('settings-status').textContent = '';
+                }, 3000);
+            }
+        };
+        document.getElementById('save-settings').ontouchstart = function(e) {
+            e.preventDefault();
+            document.getElementById('save-settings').onclick();
+        };
+        
+        // Назад
+        document.getElementById('back-btn').onclick = function() {
+            showPage('messenger');
+            loadUsers();
+            renderMessages();
+        };
+        document.getElementById('back-btn').ontouchstart = function(e) {
+            e.preventDefault();
+            showPage('messenger');
+            loadUsers();
+            renderMessages();
+        };
+    }
+    
+    // ================================================================
+    // ЗАПУСК
+    // ================================================================
+    // Проверяем сессию при загрузке
+    if (!checkSession()) {
+        initAuth();
+    }
+</script>
 </body>
 </html>
