@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Echo — Мессенджер</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="messenger-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Echo</h2>
+                <button id="logout-btn">🚪 Выйти</button>
+            </div>
+            <div class="user-list" id="user-list">
+                <!-- Список пользователей будет загружен сюда -->
+            </div>
+        </aside>
+        <main class="chat-area">
+            <div class="chat-header" id="chat-header">
+                <span>Выберите собеседника</span>
+            </div>
+            <div class="messages" id="messages">
+                <!-- Сообщения будут отображаться здесь -->
+            </div>
+            <div class="message-input">
+                <input type="text" id="message-text" placeholder="Введите сообщение..." />
+                <button id="send-btn">📨 Отправить</button>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
