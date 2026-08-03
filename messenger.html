@@ -10,29 +10,31 @@
     <div class="messenger-container">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2>Echo</h2>
-                <button id="logout-btn">🚪 Выйти</button>
+                <h2>🔊 Echo</h2>
+                <div>
+                    <a href="profile.html" style="margin-right:10px;text-decoration:none;color:#2d3e50;">⚙️</a>
+                    <button id="logout-btn" style="background:none;border:none;font-size:1.2rem;cursor:pointer;">🚪</button>
+                </div>
             </div>
             
-            <!-- 🔍 ПОИСК ПОЛЬЗОВАТЕЛЕЙ -->
             <div class="search-box">
-                <input type="text" id="search-users" placeholder="🔍 Найти пользователя..." />
+                <input type="text" id="search-users" placeholder="🔍 Найти пользователя по имени..." />
             </div>
             
             <div class="user-list" id="user-list">
-                <!-- Список пользователей будет загружен сюда -->
+                <!-- Список пользователей -->
             </div>
         </aside>
         <main class="chat-area">
             <div class="chat-header" id="chat-header">
-                <span>Выберите собеседника</span>
+                <span>👈 Выберите собеседника</span>
             </div>
             <div class="messages" id="messages">
-                <!-- Сообщения будут отображаться здесь -->
+                <p style="opacity:0.5;text-align:center;margin-top:2rem;">Выберите пользователя для начала чата</p>
             </div>
             <div class="message-input">
                 <input type="text" id="message-text" placeholder="Введите сообщение..." />
-                <button id="send-btn">📨 Отправить</button>
+                <button id="send-btn">📨</button>
             </div>
         </main>
     </div>
