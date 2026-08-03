@@ -1,5 +1,4 @@
-// profile.js — Echo Profile & Settings
-
+// profile.js — Echo Profile & Settings (без изменений)
 const SESSION_KEY = 'echo_session';
 const DB_KEY = 'echo_users';
 
@@ -35,7 +34,6 @@ if (session) {
         applyTheme(user.theme || 'light');
     }
 
-    // Сохранение настроек
     document.getElementById('save-settings').addEventListener('click', () => {
         const theme = document.getElementById('theme-select').value;
         const lang = document.getElementById('lang-select').value;
@@ -53,7 +51,6 @@ if (session) {
         }
     });
 
-    // Назад в мессенджер
     document.getElementById('back-to-messenger').addEventListener('click', () => {
         window.location.href = 'messenger.html';
     });
